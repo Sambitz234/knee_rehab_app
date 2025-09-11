@@ -5,7 +5,7 @@ from .routers import exercises, sessions, stats
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-# Create tables on startup (simple dev approach)
+# Create tables on startup 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Knee Rehab Habit Tracker", version="0.1.0")
