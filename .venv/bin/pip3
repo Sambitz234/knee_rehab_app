@@ -1,4 +1,4 @@
-#!/Users/arimoreira/Desktop/DevOps_Project/knee_rehab_app/.venv/bin/python3
+#!/Users/arimoreira/Desktop/DevOps_Project/knee_rehab_app/.venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
