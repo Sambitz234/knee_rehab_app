@@ -4,6 +4,7 @@ from . import models
 from .routers import exercises, sessions, stats
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from fastapi.responses import RedirectResponse
 
 # Create tables on startup 
 Base.metadata.create_all(bind=engine)
@@ -15,8 +16,9 @@ app.include_router(sessions.router)
 app.include_router(stats.router)
 
 @app.get("/")
+@app.get("/", include_in_schema=False)
 def root():
-    return {"ok": True, "message": "See  http://localhost:8000/ui for interactive API"}
+  return RedirectResponse(url="/ui")
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
