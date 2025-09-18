@@ -16,7 +16,7 @@ app.include_router(stats.router)
 
 @app.get("/")
 def root():
-    return {"ok": True, "message": "See /ui for interactive API"}
+    return {"ok": True, "message": "See  http://localhost:8000/ui for interactive API"}
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
@@ -38,7 +38,7 @@ def ui_page():
 
   <section class="card">
     <h2>Create Exercise</h2>
-    <form id="exerciseForm" onsubmit="return createExercise(event)">
+    <form id="exerciseForm">
       <div class="grid">
         <label>Name
           <input id="name" required placeholder="Heel Slides">
@@ -79,9 +79,11 @@ def ui_page():
         <label><input type="checkbox" name="dow" value="6"> Sat</label>
       </fieldset>
 
-      <button type="submit">Add Exercise</button>
+      <button type="submit" id="exerciseFormSubmit">Add Exercise</button>
       <span id="msg" class="msg"></span>
+      <!-- Cancel button will be injected by JS if not present -->
     </form>
+
   </section>
 
   <section class="card">

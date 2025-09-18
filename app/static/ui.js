@@ -16,6 +16,7 @@ async function fetchExercises() {
       <td>${schedule}</td>
       <td>
         <button class="action-del" onclick="deleteExercise(${ex.id})">Delete</button>
+        <button onclick="editExercise(${ex.id})">Edit</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -39,7 +40,10 @@ function readCheckedDOW() {
     .sort((a,b)=>a-b);
 }
 
-async function createExercise(ev) {
+
+let editingExerciseId = null;
+
+async function createOrUpdateExercise(ev) {
   ev.preventDefault();
   const payload = {
     name: document.getElementById('name').value.trim(),
@@ -50,14 +54,22 @@ async function createExercise(ev) {
     target_hold_sec: Number(document.getElementById('target_hold_sec').value) || null,
     schedule_dow: readCheckedDOW()
   };
-  const res = await fetch('/exercises', {
-    method: 'POST',
+  let url = '/exercises';
+  let method = 'POST';
+  if (editingExerciseId !== null) {
+    url = `/exercises/${editingExerciseId}`;
+    method = 'PUT';
+  }
+  const res = await fetch(url, {
+    method,
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify(payload)
   });
   if (res.ok) {
     document.getElementById('exerciseForm').reset();
-    document.getElementById('msg').textContent = 'Saved ✓';
+    document.getElementById('msg').textContent = editingExerciseId === null ? 'Saved ✓' : 'Updated ✓';
+    editingExerciseId = null;
+    document.getElementById('exerciseFormSubmit').textContent = 'Add Exercise';
     fetchExercises();
   } else {
     const txt = await res.text();
@@ -66,4 +78,53 @@ async function createExercise(ev) {
   return false;
 }
 
-window.addEventListener('DOMContentLoaded', fetchExercises);
+async function editExercise(id) {
+  const res = await fetch(`/exercises/${id}`);
+  if (!res.ok) {
+    alert('Failed to fetch exercise');
+    return;
+  }
+  const ex = await res.json();
+  document.getElementById('name').value = ex.name;
+  document.getElementById('side').value = ex.side;
+  document.getElementById('category').value = ex.category;
+  document.getElementById('target_sets').value = ex.target_sets ?? '';
+  document.getElementById('target_reps').value = ex.target_reps ?? '';
+  document.getElementById('target_hold_sec').value = ex.target_hold_sec ?? '';
+  // Uncheck all DOW checkboxes first
+  document.querySelectorAll('input[name="dow"]').forEach(cb => { cb.checked = false; });
+  (ex.schedule_dow || []).forEach(dow => {
+    const cb = document.querySelector(`input[name="dow"][value="${dow}"]`);
+    if (cb) cb.checked = true;
+  });
+  editingExerciseId = id;
+  document.getElementById('exerciseFormSubmit').textContent = 'Update Exercise';
+  document.getElementById('msg').textContent = 'Editing #' + id;
+}
+
+function resetExerciseForm() {
+  document.getElementById('exerciseForm').reset();
+  editingExerciseId = null;
+  document.getElementById('exerciseFormSubmit').textContent = 'Add Exercise';
+  document.getElementById('msg').textContent = '';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  fetchExercises();
+  // Attach new handler for form submit
+  const form = document.getElementById('exerciseForm');
+  if (form) {
+    form.onsubmit = createOrUpdateExercise;
+  }
+  // Optionally, add a cancel button if not present
+  let cancelBtn = document.getElementById('exerciseFormCancel');
+  if (!cancelBtn && form) {
+    cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.id = 'exerciseFormCancel';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.marginLeft = '10px';
+    cancelBtn.onclick = resetExerciseForm;
+    form.appendChild(cancelBtn);
+  }
+});
