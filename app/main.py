@@ -85,7 +85,52 @@ def ui_page():
       <span id="msg" class="msg"></span>
       <!-- Cancel button will be injected by JS if not present -->
     </form>
+  </section>
 
+  <section class="card">
+    <h2>Create Session</h2>
+    <form id="sessionForm">
+      <div class="grid">
+        <label>Date
+          <input id="session_date" type="date" required>
+        </label>
+        <label>Exercise
+          <select id="session_exercise" required></select>
+        </label>
+        <label>Sets
+          <input id="session_sets" type="number" min="0">
+        </label>
+        <label>Reps
+          <input id="session_reps" type="number" min="0">
+        </label>
+        <label>Hold (sec)
+          <input id="session_hold_sec" type="number" min="0">
+        </label>
+        <label>Pain (0-10)
+          <input id="session_pain" type="number" min="0" max="10">
+        </label>
+        <label>ROM (deg)
+          <input id="session_rom" type="number" min="0" max="180">
+        </label>
+        <label>Notes
+          <input id="session_notes" type="text">
+        </label>
+      </div>
+      <button type="submit" id="sessionFormSubmit">Add Session Entry</button>
+      <span id="session_msg" class="msg"></span>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Sessions</h2>
+    <table id="sessionTable">
+      <thead>
+        <tr>
+          <th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Hold</th><th>Pain</th><th>ROM</th><th>Notes</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </section>
 
   <section class="card">

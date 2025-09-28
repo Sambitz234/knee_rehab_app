@@ -21,6 +21,18 @@ async function fetchExercises() {
     `;
     tbody.appendChild(tr);
   });
+
+  // Populate session exercise dropdown
+  const sessionExercise = document.getElementById('session_exercise');
+  if (sessionExercise) {
+    sessionExercise.innerHTML = '';
+    data.forEach(ex => {
+      const opt = document.createElement('option');
+      opt.value = ex.id;
+      opt.textContent = ex.name;
+      sessionExercise.appendChild(opt);
+    });
+  }
 }
 
 async function deleteExercise(id) {
@@ -127,4 +139,66 @@ window.addEventListener('DOMContentLoaded', () => {
     cancelBtn.onclick = resetExerciseForm;
     form.appendChild(cancelBtn);
   }
+
+  // Session form handler
+  const sessionForm = document.getElementById('sessionForm');
+  if (sessionForm) {
+    sessionForm.onsubmit = createSession;
+  }
+  fetchSessions();
 });
+
+async function createSession(ev) {
+  ev.preventDefault();
+  const payload = {
+    exercise_id: Number(document.getElementById('session_exercise').value),
+    date: document.getElementById('session_date').value,
+    sets: Number(document.getElementById('session_sets').value) || null,
+    reps: Number(document.getElementById('session_reps').value) || null,
+    hold_sec: Number(document.getElementById('session_hold_sec').value) || null,
+    pain_0_10: Number(document.getElementById('session_pain').value) || null,
+    rom_deg: Number(document.getElementById('session_rom').value) || null,
+    notes: document.getElementById('session_notes').value.trim() || null
+  };
+  const res = await fetch('/sessions', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    document.getElementById('sessionForm').reset();
+    document.getElementById('session_msg').textContent = 'Session entry added ✓';
+    fetchSessions();
+  } else {
+    const txt = await res.text();
+    document.getElementById('session_msg').textContent = 'Error: ' + txt;
+  }
+  return false;
+}
+
+async function fetchSessions() {
+  const res = await fetch('/sessions');
+  const data = await res.json();
+  // Get exercise names for mapping
+  const exRes = await fetch('/exercises');
+  const exData = await exRes.json();
+  const exMap = {};
+  exData.forEach(ex => { exMap[ex.id] = ex.name; });
+
+  const tbody = document.querySelector('#sessionTable tbody');
+  tbody.innerHTML = '';
+  data.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${s.date}</td>
+      <td>${exMap[s.exercise_id] || s.exercise_id}</td>
+      <td>${s.sets ?? ''}</td>
+      <td>${s.reps ?? ''}</td>
+      <td>${s.hold_sec ?? ''}</td>
+      <td>${s.pain_0_10 ?? ''}</td>
+      <td>${s.rom_deg ?? ''}</td>
+      <td>${s.notes ?? ''}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
