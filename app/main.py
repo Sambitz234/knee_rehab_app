@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.responses import RedirectResponse
 
-# Create tables on startup 
+# Create tables 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Knee Rehab Habit Tracker", version="0.1.0")
