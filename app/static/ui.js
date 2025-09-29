@@ -156,9 +156,7 @@ async function createSession(ev) {
     sets: Number(document.getElementById('session_sets').value) || null,
     reps: Number(document.getElementById('session_reps').value) || null,
     hold_sec: Number(document.getElementById('session_hold_sec').value) || null,
-    pain_0_10: Number(document.getElementById('session_pain').value) || null,
-    rom_deg: Number(document.getElementById('session_rom').value) || null,
-    notes: document.getElementById('session_notes').value.trim() || null
+    pain_0_10: Number(document.getElementById('session_pain').value) || null
   };
   const res = await fetch('/sessions', {
     method: 'POST',
@@ -196,8 +194,10 @@ async function fetchSessions() {
       <td>${s.reps ?? ''}</td>
       <td>${s.hold_sec ?? ''}</td>
       <td>${s.pain_0_10 ?? ''}</td>
-      <td>${s.rom_deg ?? ''}</td>
-      <td>${s.notes ?? ''}</td>
+      <td>
+        <button onclick="editSession(${s.id})">Edit</button>
+        <button onclick="deleteSession(${s.id})">Delete</button>
+      </td>
     `;
     tbody.appendChild(tr);
   });
