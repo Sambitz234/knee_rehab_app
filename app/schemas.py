@@ -2,7 +2,6 @@ from typing import Optional, List, Literal
 from pydantic import BaseModel, Field, conint
 import datetime
 
-# Type aliases for constrained ints
 PainInt = Optional[conint(ge=0, le=10)]
 ROMInt = Optional[conint(ge=0, le=180)]
 from typing import Optional, List, Literal
@@ -19,8 +18,8 @@ class ExerciseBase(BaseModel):
     target_sets: Optional[int] = None
     target_reps: Optional[int] = None
     target_hold_sec: Optional[int] = None
-    # 0=Sun, 1=Mon, ... 6=Sat (choose any convention; just be consistent)
-    schedule_dow: List[int] = Field(default_factory=list)  # e.g. [1,3,5]
+    # 0=Sun, 1=Mon, ... 6=Sat
+    schedule_dow: List[int] = Field(default_factory=list)  
 
 class ExerciseCreate(ExerciseBase):
     pass
@@ -55,8 +54,6 @@ class SessionUpdate(BaseModel):
     hold_sec: Optional[int] = None
     pain_0_10: PainInt = None
     rom_deg: ROMInt = None
-    notes: Optional[str] = None
-    notes: Optional[str] = None
 
 class SessionCreate(SessionBase):
     pass
@@ -65,18 +62,3 @@ class SessionOut(SessionBase):
     id: int
     class Config:
         from_attributes = True
-
-class WeeklyAdherenceOut(BaseModel):
-    week_start: date
-    week_end: date
-    scheduled_count: int
-    completed_count: int
-    adherence_pct: float
-
-class ProgressPoint(BaseModel):
-    date: date
-    value: Optional[float] = None
-
-class ProgressSeriesOut(BaseModel):
-    metric: str
-    points: List[ProgressPoint]

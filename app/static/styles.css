@@ -233,7 +233,17 @@ fieldset.dow legend {
 	border-collapse: separate;
 	border-spacing: 0 0.5em;
 	margin-bottom: 1.5em;
+	table-layout: fixed;
 }
+
+#sessionTable th:nth-child(1) { width: 15%; } /* Date */
+#sessionTable th:nth-child(2) { width: 25%; } /* Exercise */
+#sessionTable th:nth-child(3) { width: 10%; } /* Sets */
+#sessionTable th:nth-child(4) { width: 10%; } /* Reps */
+#sessionTable th:nth-child(5) { width: 10%; } /* Hold */
+#sessionTable th:nth-child(6) { width: 10%; } /* Pain */
+#sessionTable th:nth-child(7) { width: 10%; } /* ROM */
+#sessionTable th:nth-child(8) { width: 10%; } /* Actions */
 .table th, .table td {
 	padding: 0.8em 1em;
 	background: var(--white);

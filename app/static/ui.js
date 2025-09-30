@@ -101,28 +101,35 @@ async function editSession(id) {
   document.getElementById('session_reps').value = s.reps ?? '';
   document.getElementById('session_hold_sec').value = s.hold_sec ?? '';
   document.getElementById('session_pain').value = s.pain_0_10 ?? '';
+  document.getElementById('session_rom').value = s.rom_deg ?? '';
   editingSessionId = id;
   document.getElementById('sessionFormSubmit').textContent = 'Update Session';
   document.getElementById('session_msg').textContent = 'Editing #' + id;
 }
 
-// Patch createSession to handle update if editingSessionId is set
-const origCreateSession = createSession;
+// Handle both create and update operations for sessions
 async function createSession(ev) {
   ev.preventDefault();
+  const romValue = document.getElementById('session_rom').value;
+  
   let payload = {
     exercise_id: Number(document.getElementById('session_exercise').value),
     date: document.getElementById('session_date').value,
     sets: Number(document.getElementById('session_sets').value) || null,
     reps: Number(document.getElementById('session_reps').value) || null,
     hold_sec: Number(document.getElementById('session_hold_sec').value) || null,
-    pain_0_10: Number(document.getElementById('session_pain').value) || null
+    pain_0_10: Number(document.getElementById('session_pain').value) || null,
+    rom_deg: romValue ? Number(romValue) : null
   };
-  // For update, only send fields that are not null/empty (exclude unset)
+  console.log('ROM value from form:', romValue);
+  console.log('Payload being sent:', payload);
+  // For update, only send non-null optional fields (keep exercise_id and date always)
   if (editingSessionId !== null) {
-    Object.keys(payload).forEach(k => {
-      if (payload[k] === null || payload[k] === '' || payload[k] === undefined) {
-        delete payload[k];
+    // Keep exercise_id and date, only remove null optional fields
+    const optionalFields = ['sets', 'reps', 'hold_sec', 'pain_0_10', 'rom_deg'];
+    optionalFields.forEach(field => {
+      if (payload[field] === null || payload[field] === '' || payload[field] === undefined) {
+        delete payload[field];
       }
     });
   }
@@ -374,32 +381,6 @@ window.addEventListener('DOMContentLoaded', () => {
   renderPainLineChart();
 });
 
-async function createSession(ev) {
-  ev.preventDefault();
-  const payload = {
-    exercise_id: Number(document.getElementById('session_exercise').value),
-    date: document.getElementById('session_date').value,
-    sets: Number(document.getElementById('session_sets').value) || null,
-    reps: Number(document.getElementById('session_reps').value) || null,
-    hold_sec: Number(document.getElementById('session_hold_sec').value) || null,
-    pain_0_10: Number(document.getElementById('session_pain').value) || null
-  };
-  const res = await fetch('/sessions', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  });
-  if (res.ok) {
-    document.getElementById('sessionForm').reset();
-    document.getElementById('session_msg').textContent = 'Session entry added ✓';
-    fetchSessions();
-  } else {
-    const txt = await res.text();
-    document.getElementById('session_msg').textContent = 'Error: ' + txt;
-  }
-  return false;
-}
-
 async function fetchSessions() {
   const res = await fetch('/sessions');
   const data = await res.json();
@@ -412,6 +393,7 @@ async function fetchSessions() {
   const tbody = document.querySelector('#sessionTable tbody');
   tbody.innerHTML = '';
   data.forEach(s => {
+    console.log('Session data:', s); // Debug log
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${s.date}</td>
@@ -420,6 +402,7 @@ async function fetchSessions() {
       <td>${s.reps ?? ''}</td>
       <td>${s.hold_sec ?? ''}</td>
       <td>${s.pain_0_10 ?? ''}</td>
+      <td>${s.rom_deg ?? ''}</td>
       <td>
         <button onclick="editSession(${s.id})">Edit</button>
         <button onclick="deleteSession(${s.id})">Delete</button>

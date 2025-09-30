@@ -33,7 +33,7 @@ def ui_page():
 <head>
   <meta charset=\"utf-8\">
   <title>Knee Rehab Tracker</title>
-  <link rel=\"stylesheet\" href=\"/static/styles.css\">
+  <link rel=\"stylesheet\" href=\"/static/styles.css?v=4\">
 </head>
 <body>
   <header>
@@ -124,23 +124,27 @@ def ui_page():
             <select id="session_exercise" required></select>
           </label>
         </div>
-        <div class="grid" style="grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.2em 2em; margin-bottom: 0.5em;">
+        <div class="grid" style="grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.2em 2em; margin-bottom: 0.5em;">
           <label>Sets
             <input id="session_sets" type="number" min="0">
           </label>
           <label>Reps
             <input id="session_reps" type="number" min="0">
           </label>
+        </div>
+        <div class="grid" style="grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.2em 2em; margin-bottom: 0.5em;">
           <label>Hold (sec)
             <input id="session_hold_sec" type="number" min="0">
           </label>
-        </div>
-        <div class="grid" style="grid-template-columns: 1fr; margin-bottom: 0.5em;">
           <label>Pain (0-10)
             <input id="session_pain" type="number" min="0" max="10">
           </label>
+          <label>ROM (degrees)
+            <input id="session_rom" type="number" min="0" max="180">
+          </label>
         </div>
         <button type="submit" class="btn-primary" id="sessionFormSubmit">Log Session</button>
+        <button type="button" class="btn-outline" id="sessionFormCancel" style="margin-left:10px">Cancel</button>
         <span id="session_msg" class="msg"></span>
       </form>
     </section>
@@ -149,7 +153,7 @@ def ui_page():
       <table id=\"sessionTable\" class=\"table\">
         <thead>
           <tr>
-            <th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Hold</th><th>Pain</th><th>Actions</th>
+            <th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Hold</th><th>Pain</th><th>ROM</th><th>Actions</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -169,7 +173,7 @@ def ui_page():
     </section>
   </div>
   <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
-  <script src=\"/static/ui.js\"></script>
+  <script src=\"/static/ui.js?v=4\"></script>
   <script>
     // Tab navigation: scroll to card and highlight active
     document.addEventListener('DOMContentLoaded', function() {
