@@ -7,7 +7,6 @@ async function renderPainLineChart() {
   const exercises = await exRes.json();
   const exMap = {};
   exercises.forEach(ex => { exMap[ex.id] = ex.name; });
-  // Prepare data: x = exercise name, y = pain, each point is a session (date in tooltip)
   const points = [];
   sessions.forEach(s => {
     if (s.pain_0_10 !== null && s.pain_0_10 !== undefined) {
@@ -18,7 +17,7 @@ async function renderPainLineChart() {
       });
     }
   });
-  // Sort by exercise name then date
+  // Sort by exercise date
   points.sort((a, b) => a.x.localeCompare(b.x) || a.date.localeCompare(b.date));
   const ctx = document.getElementById('painLineChart');
   if (!ctx) return;
@@ -165,8 +164,6 @@ function resetSessionForm() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  // ...existing code...
-  // Always attach cancel handler to Cancel button if present
   let cancelBtn = document.getElementById('sessionFormCancel');
   if (cancelBtn) {
     cancelBtn.onclick = resetSessionForm;
@@ -410,6 +407,6 @@ async function fetchSessions() {
     `;
     tbody.appendChild(tr);
   });
-  // Update pain line chart after sessions change
+  // Update chart
   renderPainLineChart();
 }

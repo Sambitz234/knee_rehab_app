@@ -60,21 +60,22 @@ This is a modern, full-stack knee rehabilitation tracker application built with 
 
 ```
 knee_rehab_app/
+│ 
 ├── app/
 │   ├── __init__.py
 │   ├── main.py           # FastAPI entry point, HTML rendering
 │   ├── models.py         # SQLAlchemy ORM models
 │   ├── schemas.py        # Pydantic schemas
 │   ├── database.py       # DB connection
+│   │ 
 │   ├── routers/
 │   │   ├── exercises.py  # Exercise CRUD endpoints
 │   │   ├── sessions.py   # Session CRUD endpoints
-│   │   └── stats.py      # Stats endpoints
-│   ├── services/
-│   │   └── stats.py      # Stats logic
+│   │ 
 │   └── static/
-│       ├── styles.css    # App styles
-│       └── ui.js         # Frontend JS
+│   │   ├── styles.css    # App styles
+│   │   └── ui.js         # Frontend JS
+│   │ 
 ├── requirements.txt
 ├── rehab.db              # SQLite DB 
 └── README.md

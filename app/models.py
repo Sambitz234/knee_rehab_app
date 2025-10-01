@@ -13,7 +13,6 @@ class Exercise(Base):
     target_sets = Column(Integer, nullable=True)
     target_reps = Column(Integer, nullable=True)
     target_hold_sec = Column(Integer, nullable=True)
-    # store JSON as TEXT for simplicity
     schedule_dow = Column(Text, nullable=False, default="[]")
     created_at = Column(DateTime, default=datetime.utcnow)
 

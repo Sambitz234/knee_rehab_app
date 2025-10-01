@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from .database import Base, engine
 from . import models
-from .routers import exercises, sessions, stats
+from .routers import exercises, sessions
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.responses import RedirectResponse
@@ -13,7 +13,7 @@ app = FastAPI(title="Knee Rehab Habit Tracker", version="0.1.0")
 
 app.include_router(exercises.router)
 app.include_router(sessions.router)
-app.include_router(stats.router)
+
 
 @app.get("/")
 @app.get("/", include_in_schema=False)
@@ -87,7 +87,7 @@ def ui_page():
           </label>
         </div>
         <fieldset class="dow">
-          <legend>Days of Week (0=Sun … 6=Sat)</legend>
+          <legend>Days of Week</legend>
           <label><input type="checkbox" name="dow" value="0"> Sun</label>
           <label><input type="checkbox" name="dow" value="1"> Mon</label>
           <label><input type="checkbox" name="dow" value="2"> Tue</label>
