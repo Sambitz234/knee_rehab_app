@@ -83,6 +83,28 @@ knee_rehab_app/
 
 ---
 
+## Running Tests & Checking Coverage
+
+To run all backend unit tests and check code coverage:
+
+1. **Activate your virtual environment:**
+	```bash
+	source .venv/bin/activate
+	```
+
+2. **Install dependencies (if not already done):**
+	```bash
+	pip install -r requirements.txt
+	```
+
+3. **Run all tests and show coverage report:**
+	```bash
+	PYTHONPATH=. pytest --cov=app --cov-report=term-missing tests/
+	```
+
+This will display a coverage summary in your terminal. For maximum grade, ensure coverage is above 90%.
+
+---
 ## Troubleshooting
 - If you change models, delete `rehab.db` to reset the database.
 - For port conflicts, change the port in the `uvicorn` command (e.g., `--port 8080`).
