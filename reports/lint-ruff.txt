@@ -1,0 +1,319 @@
+F401 [*] `.models` imported but unused
+ --> app/main.py:3:15
+  |
+1 | from fastapi import FastAPI
+2 | from .database import Base, engine
+3 | from . import models
+  |               ^^^^^^
+4 | from .routers import exercises, sessions
+5 | from fastapi.staticfiles import StaticFiles
+  |
+help: Remove unused import: `.models`
+
+E402 Module level import not at top of file
+  --> app/main.py:23:1
+   |
+21 |   return RedirectResponse(url="/ui")
+22 |
+23 | from fastapi.staticfiles import StaticFiles
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+24 | from fastapi.responses import HTMLResponse
+   |
+
+F811 [*] Redefinition of unused `StaticFiles` from line 5
+  --> app/main.py:23:33
+   |
+21 |   return RedirectResponse(url="/ui")
+22 |
+23 | from fastapi.staticfiles import StaticFiles
+   |                                 ^^^^^^^^^^^ `StaticFiles` redefined here
+24 | from fastapi.responses import HTMLResponse
+   |
+  ::: app/main.py:5:33
+   |
+ 3 | from . import models
+ 4 | from .routers import exercises, sessions
+ 5 | from fastapi.staticfiles import StaticFiles
+   |                                 ----------- previous definition of `StaticFiles` here
+ 6 | from fastapi.responses import HTMLResponse
+ 7 | from fastapi.responses import RedirectResponse
+   |
+help: Remove definition: `StaticFiles`
+
+E402 Module level import not at top of file
+  --> app/main.py:24:1
+   |
+23 | from fastapi.staticfiles import StaticFiles
+24 | from fastapi.responses import HTMLResponse
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+25 |
+26 | app.mount("/static", StaticFiles(directory="app/static"), name="static")
+   |
+
+F811 [*] Redefinition of unused `HTMLResponse` from line 6
+  --> app/main.py:24:31
+   |
+23 | from fastapi.staticfiles import StaticFiles
+24 | from fastapi.responses import HTMLResponse
+   |                               ^^^^^^^^^^^^ `HTMLResponse` redefined here
+25 |
+26 | app.mount("/static", StaticFiles(directory="app/static"), name="static")
+   |
+  ::: app/main.py:6:31
+   |
+ 4 | from .routers import exercises, sessions
+ 5 | from fastapi.staticfiles import StaticFiles
+ 6 | from fastapi.responses import HTMLResponse
+   |                               ------------ previous definition of `HTMLResponse` here
+ 7 | from fastapi.responses import RedirectResponse
+   |
+help: Remove definition: `HTMLResponse`
+
+E701 Multiple statements on one line (colon)
+  --> app/routers/exercises.py:76:32
+   |
+74 |     if not ex:
+75 |         raise HTTPException(status_code=404, detail="Exercise not found")
+76 |     if payload.name is not None: ex.name = payload.name
+   |                                ^
+77 |     if payload.side is not None: ex.side = payload.side
+78 |     if payload.category is not None: ex.category = payload.category
+   |
+
+E701 Multiple statements on one line (colon)
+  --> app/routers/exercises.py:77:32
+   |
+75 |         raise HTTPException(status_code=404, detail="Exercise not found")
+76 |     if payload.name is not None: ex.name = payload.name
+77 |     if payload.side is not None: ex.side = payload.side
+   |                                ^
+78 |     if payload.category is not None: ex.category = payload.category
+79 |     if payload.target_sets is not None: ex.target_sets = payload.target_sets
+   |
+
+E701 Multiple statements on one line (colon)
+  --> app/routers/exercises.py:78:36
+   |
+76 |     if payload.name is not None: ex.name = payload.name
+77 |     if payload.side is not None: ex.side = payload.side
+78 |     if payload.category is not None: ex.category = payload.category
+   |                                    ^
+79 |     if payload.target_sets is not None: ex.target_sets = payload.target_sets
+80 |     if payload.target_reps is not None: ex.target_reps = payload.target_reps
+   |
+
+E701 Multiple statements on one line (colon)
+  --> app/routers/exercises.py:79:39
+   |
+77 |     if payload.side is not None: ex.side = payload.side
+78 |     if payload.category is not None: ex.category = payload.category
+79 |     if payload.target_sets is not None: ex.target_sets = payload.target_sets
+   |                                       ^
+80 |     if payload.target_reps is not None: ex.target_reps = payload.target_reps
+81 |     if payload.target_hold_sec is not None: ex.target_hold_sec = payload.target_hold_sec
+   |
+
+E701 Multiple statements on one line (colon)
+  --> app/routers/exercises.py:80:39
+   |
+78 |     if payload.category is not None: ex.category = payload.category
+79 |     if payload.target_sets is not None: ex.target_sets = payload.target_sets
+80 |     if payload.target_reps is not None: ex.target_reps = payload.target_reps
+   |                                       ^
+81 |     if payload.target_hold_sec is not None: ex.target_hold_sec = payload.target_hold_sec
+82 |     if payload.schedule_dow is not None: ex.schedule_dow = json.dumps(payload.schedule_dow)
+   |
+
+E701 Multiple statements on one line (colon)
+  --> app/routers/exercises.py:81:43
+   |
+79 |     if payload.target_sets is not None: ex.target_sets = payload.target_sets
+80 |     if payload.target_reps is not None: ex.target_reps = payload.target_reps
+81 |     if payload.target_hold_sec is not None: ex.target_hold_sec = payload.target_hold_sec
+   |                                           ^
+82 |     if payload.schedule_dow is not None: ex.schedule_dow = json.dumps(payload.schedule_dow)
+83 |     db.commit()
+   |
+
+E701 Multiple statements on one line (colon)
+  --> app/routers/exercises.py:82:40
+   |
+80 |     if payload.target_reps is not None: ex.target_reps = payload.target_reps
+81 |     if payload.target_hold_sec is not None: ex.target_hold_sec = payload.target_hold_sec
+82 |     if payload.schedule_dow is not None: ex.schedule_dow = json.dumps(payload.schedule_dow)
+   |                                        ^
+83 |     db.commit()
+84 |     db.refresh(ex)
+   |
+
+F401 [*] `fastapi.status` imported but unused
+ --> app/routers/sessions.py:2:63
+  |
+2 | from fastapi import APIRouter, Depends, HTTPException, Query, status
+  |                                                               ^^^^^^
+3 | from sqlalchemy.orm import Session
+4 | from datetime import date
+  |
+help: Remove unused import: `fastapi.status`
+
+E402 Module level import not at top of file
+ --> app/schemas.py:7:1
+  |
+5 | PainInt = Optional[conint(ge=0, le=10)]
+6 | ROMInt = Optional[conint(ge=0, le=180)]
+7 | from typing import Optional, List, Literal
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8 | from pydantic import BaseModel, Field, conint
+9 | from datetime import date
+  |
+
+F811 [*] Redefinition of unused `List` from line 1
+ --> app/schemas.py:7:30
+  |
+5 | PainInt = Optional[conint(ge=0, le=10)]
+6 | ROMInt = Optional[conint(ge=0, le=180)]
+7 | from typing import Optional, List, Literal
+  |                              ^^^^ `List` redefined here
+8 | from pydantic import BaseModel, Field, conint
+9 | from datetime import date
+  |
+ ::: app/schemas.py:1:30
+  |
+1 | from typing import Optional, List, Literal
+  |                              ---- previous definition of `List` here
+2 | from pydantic import BaseModel, Field, conint
+3 | import datetime
+  |
+help: Remove definition: `List`
+
+F811 [*] Redefinition of unused `Literal` from line 1
+ --> app/schemas.py:7:36
+  |
+5 | PainInt = Optional[conint(ge=0, le=10)]
+6 | ROMInt = Optional[conint(ge=0, le=180)]
+7 | from typing import Optional, List, Literal
+  |                                    ^^^^^^^ `Literal` redefined here
+8 | from pydantic import BaseModel, Field, conint
+9 | from datetime import date
+  |
+ ::: app/schemas.py:1:36
+  |
+1 | from typing import Optional, List, Literal
+  |                                    ------- previous definition of `Literal` here
+2 | from pydantic import BaseModel, Field, conint
+3 | import datetime
+  |
+help: Remove definition: `Literal`
+
+E402 Module level import not at top of file
+ --> app/schemas.py:8:1
+  |
+6 | ROMInt = Optional[conint(ge=0, le=180)]
+7 | from typing import Optional, List, Literal
+8 | from pydantic import BaseModel, Field, conint
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9 | from datetime import date
+  |
+
+F811 [*] Redefinition of unused `BaseModel` from line 2
+ --> app/schemas.py:8:22
+  |
+6 | ROMInt = Optional[conint(ge=0, le=180)]
+7 | from typing import Optional, List, Literal
+8 | from pydantic import BaseModel, Field, conint
+  |                      ^^^^^^^^^ `BaseModel` redefined here
+9 | from datetime import date
+  |
+ ::: app/schemas.py:2:22
+  |
+1 | from typing import Optional, List, Literal
+2 | from pydantic import BaseModel, Field, conint
+  |                      --------- previous definition of `BaseModel` here
+3 | import datetime
+  |
+help: Remove definition: `BaseModel`
+
+F811 [*] Redefinition of unused `Field` from line 2
+ --> app/schemas.py:8:33
+  |
+6 | ROMInt = Optional[conint(ge=0, le=180)]
+7 | from typing import Optional, List, Literal
+8 | from pydantic import BaseModel, Field, conint
+  |                                 ^^^^^ `Field` redefined here
+9 | from datetime import date
+  |
+ ::: app/schemas.py:2:33
+  |
+1 | from typing import Optional, List, Literal
+2 | from pydantic import BaseModel, Field, conint
+  |                                 ----- previous definition of `Field` here
+3 | import datetime
+  |
+help: Remove definition: `Field`
+
+E402 Module level import not at top of file
+  --> app/schemas.py:9:1
+   |
+ 7 | from typing import Optional, List, Literal
+ 8 | from pydantic import BaseModel, Field, conint
+ 9 | from datetime import date
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^
+10 |
+11 | Side = Literal["left", "right", "both"]
+   |
+
+F401 [*] `pytest` imported but unused
+ --> tests/test_exercises.py:2:8
+  |
+1 | # Tests for exercises endpoints
+2 | import pytest
+  |        ^^^^^^
+3 | from fastapi.testclient import TestClient
+4 | from app.main import app
+  |
+help: Remove unused import: `pytest`
+
+F401 [*] `pytest` imported but unused
+ --> tests/test_main.py:2:8
+  |
+1 | # Tests for FastAPI main endpoints
+2 | import pytest
+  |        ^^^^^^
+3 | from fastapi.testclient import TestClient
+4 | from app.main import app
+  |
+help: Remove unused import: `pytest`
+
+F401 [*] `pytest` imported but unused
+ --> tests/test_models.py:2:8
+  |
+1 | # Tests for models (example: Exercise)
+2 | import pytest
+  |        ^^^^^^
+3 | from app.models import Exercise
+  |
+help: Remove unused import: `pytest`
+
+F401 [*] `pytest` imported but unused
+ --> tests/test_schemas.py:2:8
+  |
+1 | # Tests for schemas (example: ExerciseCreate)
+2 | import pytest
+  |        ^^^^^^
+3 | from app.schemas import ExerciseCreate
+  |
+help: Remove unused import: `pytest`
+
+F401 [*] `pytest` imported but unused
+ --> tests/test_sessions.py:2:8
+  |
+1 | # Tests for sessions endpoints
+2 | import pytest
+  |        ^^^^^^
+3 | from fastapi.testclient import TestClient
+4 | from app.main import app
+  |
+help: Remove unused import: `pytest`
+
+Found 25 errors.
+[*] 13 fixable with the `--fix` option.

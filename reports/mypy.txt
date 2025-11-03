@@ -1,0 +1,27 @@
+app/schemas.py:5: error: Invalid type alias: expression is not a valid type  [valid-type]
+app/schemas.py:6: error: Invalid type alias: expression is not a valid type  [valid-type]
+app/schemas.py:47: error: Variable "app.schemas.PainInt" is not valid as a type  [valid-type]
+app/schemas.py:47: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+app/schemas.py:48: error: Variable "app.schemas.ROMInt" is not valid as a type  [valid-type]
+app/schemas.py:48: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+app/schemas.py:55: error: Variable "app.schemas.PainInt" is not valid as a type  [valid-type]
+app/schemas.py:55: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+app/schemas.py:56: error: Variable "app.schemas.ROMInt" is not valid as a type  [valid-type]
+app/schemas.py:56: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+app/routers/exercises.py:25: error: Argument "id" to "ExerciseOut" has incompatible type "Column[int]"; expected "int"  [arg-type]
+app/routers/exercises.py:26: error: Argument "name" to "ExerciseOut" has incompatible type "Column[str]"; expected "str"  [arg-type]
+app/routers/exercises.py:27: error: Argument "side" to "ExerciseOut" has incompatible type "Column[str]"; expected "Literal['left', 'right', 'both']"  [arg-type]
+app/routers/exercises.py:28: error: Argument "category" to "ExerciseOut" has incompatible type "Column[str]"; expected "Literal['strength', 'mobility', 'balance']"  [arg-type]
+app/routers/exercises.py:29: error: Argument "target_sets" to "ExerciseOut" has incompatible type "Column[int]"; expected "int | None"  [arg-type]
+app/routers/exercises.py:30: error: Argument "target_reps" to "ExerciseOut" has incompatible type "Column[int]"; expected "int | None"  [arg-type]
+app/routers/exercises.py:31: error: Argument "target_hold_sec" to "ExerciseOut" has incompatible type "Column[int]"; expected "int | None"  [arg-type]
+app/routers/exercises.py:32: error: Argument 1 to "loads" has incompatible type "Column[str] | str"; expected "str | bytes | bytearray"  [arg-type]
+app/routers/exercises.py:43: error: Argument "id" to "ExerciseOut" has incompatible type "Column[int]"; expected "int"  [arg-type]
+app/routers/exercises.py:44: error: Argument "name" to "ExerciseOut" has incompatible type "Column[str]"; expected "str"  [arg-type]
+app/routers/exercises.py:45: error: Argument "side" to "ExerciseOut" has incompatible type "Column[str]"; expected "Literal['left', 'right', 'both']"  [arg-type]
+app/routers/exercises.py:46: error: Argument "category" to "ExerciseOut" has incompatible type "Column[str]"; expected "Literal['strength', 'mobility', 'balance']"  [arg-type]
+app/routers/exercises.py:47: error: Argument "target_sets" to "ExerciseOut" has incompatible type "Column[int]"; expected "int | None"  [arg-type]
+app/routers/exercises.py:48: error: Argument "target_reps" to "ExerciseOut" has incompatible type "Column[int]"; expected "int | None"  [arg-type]
+app/routers/exercises.py:49: error: Argument "target_hold_sec" to "ExerciseOut" has incompatible type "Column[int]"; expected "int | None"  [arg-type]
+app/routers/exercises.py:50: error: Argument 1 to "loads" has incompatible type "Column[str] | str"; expected "str | bytes | bytearray"  [arg-type]
+Found 22 errors in 2 files (checked 12 source files)
