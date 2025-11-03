@@ -6,3 +6,6 @@ python-multipart==0.0.9
 
 pytest
 pytest-cov
+
+ruff==0.0.289
+coverage==7.3.2

@@ -1,12 +1,11 @@
 from fastapi import FastAPI
 from .database import Base, engine
-from . import models
+from . import models  # intentionally imported to ensure models are registered with SQLAlchemy
 from .routers import exercises, sessions
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 
-# Create tables 
+# Create tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Knee Rehab Habit Tracker", version="0.1.0")
@@ -18,10 +17,8 @@ app.include_router(sessions.router)
 @app.get("/")
 @app.get("/", include_in_schema=False)
 def root():
-  return RedirectResponse(url="/ui")
+    return RedirectResponse(url="/ui")
 
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
