@@ -1,7 +1,3 @@
-# Day 1 — Project analysis & quick triage
-
-Date: 2025-11-03
-Branch: feat/day1-analysis (recommended; not created by this run)
 
 ## What I ran (commands executed)
 - `PYTHONPATH=. pytest -q` (tests run)
