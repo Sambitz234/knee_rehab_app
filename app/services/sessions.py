@@ -3,14 +3,14 @@ from .. import models, schemas
 
 
 def get_session(db: Session, id: int) -> schemas.SessionOut | None:
-    s = db.query(models.ExerciseSession).get(id)
+    s = db.get(models.ExerciseSession, id)
     if not s:
         return None
     return s
 
 
 def update_session(db: Session, id: int, payload: schemas.SessionUpdate) -> schemas.SessionOut | None:
-    s = db.query(models.ExerciseSession).get(id)
+    s = db.get(models.ExerciseSession, id)
     if not s:
         return None
     update_data = payload.model_dump(exclude_unset=True)
@@ -22,7 +22,7 @@ def update_session(db: Session, id: int, payload: schemas.SessionUpdate) -> sche
 
 
 def delete_session(db: Session, id: int) -> bool:
-    s = db.query(models.ExerciseSession).get(id)
+    s = db.get(models.ExerciseSession, id)
     if not s:
         return False
     db.delete(s)
@@ -32,7 +32,7 @@ def delete_session(db: Session, id: int) -> bool:
 
 def create_session(db: Session, payload: schemas.SessionCreate) -> schemas.SessionOut:
     # Ensure exercise exists
-    if not db.query(models.Exercise).get(payload.exercise_id):
+    if not db.get(models.Exercise, payload.exercise_id):
         return None
     s = models.ExerciseSession(**payload.model_dump())
     db.add(s)
