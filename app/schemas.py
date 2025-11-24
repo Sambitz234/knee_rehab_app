@@ -1,12 +1,12 @@
+from __future__ import annotations
+
 from typing import Optional, List, Literal
+from datetime import date
+
 from pydantic import BaseModel, Field, conint
-import datetime
 
 PainInt = Optional[conint(ge=0, le=10)]
 ROMInt = Optional[conint(ge=0, le=180)]
-from typing import Optional, List, Literal
-from pydantic import BaseModel, Field, conint
-from datetime import date
 
 Side = Literal["left", "right", "both"]
 Category = Literal["strength", "mobility", "balance"]
@@ -48,7 +48,7 @@ class SessionBase(BaseModel):
     rom_deg: ROMInt = None
 class SessionUpdate(BaseModel):
     exercise_id: Optional[int] = None
-    date: Optional[datetime.date] = None
+    date: Optional[date] = None
     sets: Optional[int] = None
     reps: Optional[int] = None
     hold_sec: Optional[int] = None
