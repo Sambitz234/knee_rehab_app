@@ -48,7 +48,7 @@ def list_exercises(db: Session) -> list[schemas.ExerciseOut]:
 
 
 def get_exercise(db: Session, exercise_id: int) -> schemas.ExerciseOut | None:
-    ex = db.query(models.Exercise).get(exercise_id)
+    ex = db.get(models.Exercise, exercise_id)
     if not ex:
         return None
     return schemas.ExerciseOut(
@@ -64,7 +64,7 @@ def get_exercise(db: Session, exercise_id: int) -> schemas.ExerciseOut | None:
 
 
 def update_exercise(db: Session, exercise_id: int, payload: schemas.ExerciseUpdate) -> schemas.ExerciseOut | None:
-    ex = db.query(models.Exercise).get(exercise_id)
+    ex = db.get(models.Exercise, exercise_id)
     if not ex:
         return None
     data = payload.model_dump(exclude_unset=True)
@@ -89,7 +89,7 @@ def update_exercise(db: Session, exercise_id: int, payload: schemas.ExerciseUpda
 
 
 def delete_exercise(db: Session, exercise_id: int) -> bool:
-    ex = db.query(models.Exercise).get(exercise_id)
+    ex = db.get(models.Exercise, exercise_id)
     if not ex:
         return False
     db.delete(ex)
