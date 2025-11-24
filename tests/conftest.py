@@ -6,7 +6,6 @@ from sqlalchemy.orm import sessionmaker
 from app.database import Base, get_db
 
 # Import models first so they register with Base, then import the FastAPI app
-import app.models  # ensure ORM models are imported and registered on Base
 from app.main import app as fastapi_app
 
 

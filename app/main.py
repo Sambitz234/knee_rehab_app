@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from .database import Base, engine
-from . import models  # intentionally imported to ensure models are registered with SQLAlchemy
 from .routers import exercises, sessions
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
