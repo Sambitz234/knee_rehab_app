@@ -1,5 +1,4 @@
 # Tests for schemas (example: ExerciseCreate)
-import pytest
 from app.schemas import ExerciseCreate
 
 def test_exercise_create_schema():

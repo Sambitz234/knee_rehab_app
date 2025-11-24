@@ -1,5 +1,4 @@
 # Tests for models (example: Exercise)
-import pytest
 from app.models import Exercise
 
 def test_exercise_model():

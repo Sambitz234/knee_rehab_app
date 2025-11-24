@@ -1,8 +1,7 @@
-import json
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import get_db
-from .. import models, schemas
+from .. import schemas
 from ..services import exercises as exercise_service
 
 router = APIRouter(prefix="/exercises", tags=["exercises"])
