@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'knee_rehab_app'
+    metrics_path: /metrics
+    static_configs:
+      # For macOS Docker + host service, Prometheus can scrape host.docker.internal
+      - targets: ['host.docker.internal:8000']
+      # If running the app in-compose, set target to 'app:8000'
+      # - targets: ['app:8000']
