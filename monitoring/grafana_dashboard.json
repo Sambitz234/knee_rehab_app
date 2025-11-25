@@ -1,0 +1,37 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "knee-rehab-metrics",
+    "title": "Knee Rehab - Metrics",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Request rate (r/s)",
+        "gridPos": {"x":0,"y":0,"w":12,"h":6},
+        "targets": [
+          {"expr": "sum(rate(http_requests_total[1m]))", "legendFormat": "requests/s"}
+        ]
+      },
+      {
+        "type": "graph",
+        "title": "Request latency (p95, avg)",
+        "gridPos": {"x":12,"y":0,"w":12,"h":6},
+        "targets": [
+          {"expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p95"},
+          {"expr": "sum(rate(http_request_duration_seconds_sum[5m])) / sum(rate(http_request_duration_seconds_count[5m]))", "legendFormat": "avg"}
+        ]
+      },
+      {
+        "type": "graph",
+        "title": "Errors (r/s)",
+        "gridPos": {"x":0,"y":6,"w":24,"h":6},
+        "targets": [
+          {"expr": "sum(rate(http_request_errors_total[1m]))", "legendFormat": "errors/s"}
+        ]
+      }
+    ],
+    "schemaVersion": 16,
+    "version": 1
+  },
+  "overwrite": true
+}
