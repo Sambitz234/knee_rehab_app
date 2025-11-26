@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database import Base, get_db
+import app.database as _app_db
 
 # Import models first so they register with Base, then import the FastAPI app
 from app.main import app as fastapi_app
@@ -27,7 +28,6 @@ Base.metadata.create_all(bind=engine)
 
 # Patch the application's database SessionLocal/engine to use the test DB so
 # tests that import SessionLocal from app.database will use the test DB.
-import app.database as _app_db
 _app_db.SessionLocal = TestingSessionLocal
 _app_db.engine = engine
 

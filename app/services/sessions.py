@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from .. import models, schemas
+from .. import models
+from .. import schemas
 
 
 def get_session(db: Session, id: int) -> schemas.SessionOut | None:
@@ -9,7 +10,11 @@ def get_session(db: Session, id: int) -> schemas.SessionOut | None:
     return s
 
 
-def update_session(db: Session, id: int, payload: schemas.SessionUpdate) -> schemas.SessionOut | None:
+def update_session(
+    db: Session,
+    id: int,
+    payload: schemas.SessionUpdate,
+) -> schemas.SessionOut | None:
     s = db.get(models.ExerciseSession, id)
     if not s:
         return None
@@ -30,7 +35,9 @@ def delete_session(db: Session, id: int) -> bool:
     return True
 
 
-def create_session(db: Session, payload: schemas.SessionCreate) -> schemas.SessionOut:
+def create_session(
+    db: Session, payload: schemas.SessionCreate
+) -> schemas.SessionOut:
     # Ensure exercise exists
     if not db.get(models.Exercise, payload.exercise_id):
         return None
@@ -49,4 +56,7 @@ def list_sessions(db: Session, from_date=None, to_date=None, exercise_id=None):
         q = q.filter(models.ExerciseSession.date <= to_date)
     if exercise_id:
         q = q.filter(models.ExerciseSession.exercise_id == exercise_id)
-    return q.order_by(models.ExerciseSession.date.desc(), models.ExerciseSession.id.desc()).all()
+    return q.order_by(
+        models.ExerciseSession.date.desc(),
+        models.ExerciseSession.id.desc(),
+    ).all()

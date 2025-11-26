@@ -18,7 +18,11 @@ def get_session(id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}", response_model=schemas.SessionOut)
-def update_session(id: int, payload: schemas.SessionUpdate, db: Session = Depends(get_db)):
+def update_session(
+    id: int,
+    payload: schemas.SessionUpdate,
+    db: Session = Depends(get_db),
+):
     s = session_service.update_session(db, id, payload)
     if not s:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -40,11 +44,14 @@ def create_session(payload: schemas.SessionCreate, db: Session = Depends(get_db)
     return s
 
 
-@router.get("", response_model=list[schemas.SessionOut])
+@router.get(
+    "",
+    response_model=list[schemas.SessionOut],
+)
 def list_sessions(
     db: Session = Depends(get_db),
     from_date: date = Query(default=None),
     to_date: date = Query(default=None),
-    exercise_id: int | None = Query(default=None)
+    exercise_id: int | None = Query(default=None),
 ):
     return session_service.list_sessions(db, from_date, to_date, exercise_id)

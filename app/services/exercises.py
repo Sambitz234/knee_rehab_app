@@ -1,9 +1,12 @@
 import json
 from sqlalchemy.orm import Session
-from .. import models, schemas
+from .. import models
+from .. import schemas
 
 
-def create_exercise(db: Session, payload: schemas.ExerciseCreate) -> schemas.ExerciseOut:
+def create_exercise(
+    db: Session, payload: schemas.ExerciseCreate
+) -> schemas.ExerciseOut:
     ex = models.Exercise(
         name=payload.name,
         side=payload.side,
@@ -63,7 +66,11 @@ def get_exercise(db: Session, exercise_id: int) -> schemas.ExerciseOut | None:
     )
 
 
-def update_exercise(db: Session, exercise_id: int, payload: schemas.ExerciseUpdate) -> schemas.ExerciseOut | None:
+def update_exercise(
+    db: Session,
+    exercise_id: int,
+    payload: schemas.ExerciseUpdate,
+) -> schemas.ExerciseOut | None:
     ex = db.get(models.Exercise, exercise_id)
     if not ex:
         return None
