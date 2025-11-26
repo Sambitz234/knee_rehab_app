@@ -2,7 +2,15 @@
 from app.schemas import ExerciseCreate
 
 def test_exercise_create_schema():
-    ex = ExerciseCreate(name="Squat", side="left", category="strength", target_sets=3, target_reps=10, target_hold_sec=5, schedule_dow=[1,3,5])
+    ex = ExerciseCreate(
+        name="Squat",
+        side="left",
+        category="strength",
+        target_sets=3,
+        target_reps=10,
+        target_hold_sec=5,
+        schedule_dow=[1, 3, 5],
+    )
     assert ex.name == "Squat"
     assert ex.side == "left"
     assert ex.category == "strength"

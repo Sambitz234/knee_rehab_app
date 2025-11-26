@@ -12,7 +12,10 @@ def create_exercise(payload: schemas.ExerciseCreate, db: Session = Depends(get_d
     return exercise_service.create_exercise(db, payload)
 
 
-@router.get("", response_model=list[schemas.ExerciseOut])
+@router.get(
+    "",
+    response_model=list[schemas.ExerciseOut],
+)
 def list_exercises(db: Session = Depends(get_db)):
     return exercise_service.list_exercises(db)
 
@@ -26,7 +29,11 @@ def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{exercise_id}", response_model=schemas.ExerciseOut)
-def update_exercise(exercise_id: int, payload: schemas.ExerciseUpdate, db: Session = Depends(get_db)):
+def update_exercise(
+    exercise_id: int,
+    payload: schemas.ExerciseUpdate,
+    db: Session = Depends(get_db),
+):
     out = exercise_service.update_exercise(db, exercise_id, payload)
     if not out:
         raise HTTPException(status_code=404, detail="Exercise not found")
