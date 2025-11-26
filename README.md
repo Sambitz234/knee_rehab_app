@@ -45,7 +45,7 @@ This is a modern, full-stack knee rehabilitation tracker application built with 
 
 ## Running the Application
 
-1. **Start the FastAPI server:**
+2. **Start the FastAPI server:**
 	```bash
 	uvicorn app.main:app --reload
 	```
@@ -53,6 +53,26 @@ This is a modern, full-stack knee rehabilitation tracker application built with 
 
 2. **Open the app in your browser:**
 	- Go to [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+### Containerization & CD (Day 10)
+
+This repository includes a `Dockerfile` and `docker-compose.yml` to run the app and an optional local monitoring stack (Prometheus + Grafana). A sample GitHub Actions workflow (`.github/workflows/cd.yml`) is provided to build a Docker image, push to Azure Container Registry (ACR), and deploy to Azure Web App for Containers. The workflow triggers on pushes to `main`.
+
+Required GitHub Secrets to enable the CD workflow:
+
+- `ACR_LOGIN_SERVER` — e.g. `myregistry.azurecr.io`
+- `ACR_USERNAME` — ACR username or service principal name
+- `ACR_PASSWORD` — ACR password or service principal password
+- `AZURE_WEBAPP_NAME` — The Azure Web App name to deploy the image to
+
+Local verification steps:
+
+- Build image locally: `docker build -t knee_rehab_app:local .`
+- Run locally: `docker run -p 8000:8000 knee_rehab_app:local`
+- Or bring up the full development stack: `docker compose up --build`
+- Smoke endpoints:
+  - `http://localhost:8000/health`
+  - `http://localhost:8000/metrics`
 
 ---
 
