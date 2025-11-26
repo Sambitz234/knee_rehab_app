@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: {}
 
 jobs:
   build-and-push:
@@ -28,12 +29,20 @@ jobs:
         run: |
           docker build -t ${{ github.repository }}:${{ github.sha }} .
 
-      - name: Login to ACR
-        uses: docker/login-action@v2
+      - name: Login to Azure (service principal)
+        uses: azure/login@v1
         with:
-          registry: ${{ secrets.ACR_LOGIN_SERVER }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Login to ACR via az
+        run: |
+          # get the full login server from secrets and extract the registry name in shell
+          ACR_HOST="${{ secrets.ACR_LOGIN_SERVER }}"
+          ACR_NAME="${ACR_HOST%%.*}"
+          az acr login --name "$ACR_NAME"
 
       - name: Tag & Push
         run: |
