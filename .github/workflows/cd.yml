@@ -1,56 +1,157 @@
-name: CD - Build and Deploy
+name: CD Pipeline
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch: {}
+    branches: [ main, "07-azure-deploy" ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  test:
+    name: Run Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
+          cache: "pip"
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Build Docker image
+      - name: Install dev dependencies
         run: |
-          docker build -t ${{ github.repository }}:${{ github.sha }} .
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
 
-      - name: Login to Azure (service principal)
-        uses: azure/login@v1
+      - name: Run tests
+        run: pytest --cov=src --cov-report=xml
+
+  build-and-push:
+    name: Build and Push Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name != 'pull_request'
+
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image-tag: ${{ github.sha }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} # if GHCR write blocked, create PAT and store as GHCR_TOKEN
 
-      - name: Login to ACR via az
-        run: |
-          # get the full login server from secrets and extract the registry name in shell
-          ACR_HOST="${{ secrets.ACR_LOGIN_SERVER }}"
-          ACR_NAME="${ACR_HOST%%.*}"
-          az acr login --name "$ACR_NAME"
-
-      - name: Tag & Push
-        run: |
-          docker tag ${{ github.repository }}:${{ github.sha }} ${{ secrets.ACR_LOGIN_SERVER }}/${{ github.repository }}:latest
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ github.repository }}:latest
-
-      - name: Deploy to Azure Web App for Containers
-        uses: azure/webapps-deploy@v1
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          images: ${{ secrets.ACR_LOGIN_SERVER }}/${{ github.repository }}:latest
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to VM via SSH
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/07-azure-deploy'
+    environment: production
+
+    steps:
+      - name: Deploy to VM via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ vars.VM_HOST }}
+          username: ${{ vars.VM_USERNAME }}
+          key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+          envs: GITHUB_TOKEN
+          script: |
+            set -euo pipefail
+
+            # Ensure docker available; if docker needs sudo, uncomment next line:
+            # SUDO="sudo"
+            SUDO=""
+
+            echo "Logging in to GHCR"
+            echo "$GITHUB_TOKEN" | ${SUDO} docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+            IMAGE="${REGISTRY}/${IMAGE_NAME}:latest"
+            echo "Pulling image $IMAGE"
+            ${SUDO} docker pull "$IMAGE"
+
+            echo "Stopping existing container (if any)"
+            ${SUDO} docker stop kneerehab_app || true
+            ${SUDO} docker rm kneerehab_app || true
+
+            echo "Starting container"
+            ${SUDO} docker run -d \
+              --name kneerehab_app \
+              --restart unless-stopped \
+              -p 8000:8000 \
+              -e APP_VERSION="${{ github.sha }}" \
+              "$IMAGE"
+
+            echo "Cleaning up dangling images"
+            ${SUDO} docker image prune -f
+
+            # wait-for-health up to 60s
+            for i in $(seq 1 60); do
+              if curl -sfS "http://${{ vars.VM_HOST }}:8000/health" >/dev/null 2>&1; then
+                echo "App healthy after $i seconds"
+                break
+              fi
+              sleep 1
+            done
+
+            if ! curl -sfS "http://${{ vars.VM_HOST }}:8000/health" >/dev/null 2>&1; then
+              echo "Final health check failed"
+              ${SUDO} docker logs kneerehab_app || true
+              exit 1
+            fi
+
+      - name: Deployment summary
+        run: |
+          echo "## Deployment Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Application URL:** http://${{ vars.VM_HOST }}:8000" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Endpoints" >> $GITHUB_STEP_SUMMARY
+          echo "- Health: http://${{ vars.VM_HOST }}:8000/health" >> $GITHUB_STEP_SUMMARY
+          echo "- Metrics: http://${{ vars.VM_HOST }}:8000/metrics" >> $GITHUB_STEP_SUMMARY
