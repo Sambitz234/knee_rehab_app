@@ -1,78 +1,97 @@
 # Knee Rehab Tracker App
 
-## Overview
-This is a modern, full-stack knee rehabilitation tracker application built with FastAPI (Python), SQLAlchemy (SQLite), and a responsive HTML/CSS/JS frontend. It allows users to log exercises, track rehab sessions, and visualize progress with charts.
-
----
-
 ## Features
-- Add, edit, and delete rehab exercises
-- Log daily exercise sessions with pain tracking
-- View Exercise Category Distributiona and Pain-over-time charts
-- Modern, responsive UI
-
----
+- Add, edit, delete rehab exercises
+- Log daily sessions with pain tracking
+- View charts: exercise distribution, pain over time
 
 ## Prerequisites
 - Python 3.8+
-- (Recommended) Virtual environment tool: `venv` or `virtualenv`
+- (Recommended) Virtual environment: `venv` or `virtualenv`
 
----
+## Setup
+```bash
+git clone https://github.com/Sambitz234/knee_rehab_app.git
+cd knee_rehab_app
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+# (Optional) Delete rehab.db to reset database
+```
 
-## Setup Instructions
-
-1. **Clone the repository:**
-	```bash
-	git clone https://github.com/Sambitz234/knee_rehab_app.git
-	cd knee_rehab_app
-	```
-
-2. **Create and activate a virtual environment:**
-	```bash
-	python3 -m venv .venv
-	source .venv/bin/activate
-	```
-
-3. **Install dependencies:**
-	```bash
-	pip install -r requirements.txt
-	```
-
-4. **(Optional) Initialize the database:**
-	- The app will auto-create `rehab.db` on first run. To reset, delete `rehab.db`.
-
----
 
 ## Running the Application
+```bash
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+# Open http://127.0.0.1:8000 in your browser
+```
 
-2. **Start the FastAPI server:**
-	```bash
-	uvicorn app.main:app --reload
-	```
-	- The app will be available at [http://127.0.0.1:8000](http://127.0.0.1:8000)
-
-2. **Open the app in your browser:**
-	- Go to [http://127.0.0.1:8000](http://127.0.0.1:8000)
-
-### Containerization & CD (Day 10)
-
-This repository includes a `Dockerfile` and `docker-compose.yml` to run the app and an optional local monitoring stack (Prometheus + Grafana). A sample GitHub Actions workflow (`.github/workflows/cd.yml`) is provided to build a Docker image, push to Azure Container Registry (ACR), and deploy to Azure Web App for Containers. The workflow triggers on pushes to `main`.
-
-Required GitHub Secrets to enable the CD workflow:
-
-- `ACR_LOGIN_SERVER` — e.g. `myregistry.azurecr.io`
-- `ACR_USERNAME` — ACR username or service principal name
-- `ACR_PASSWORD` — ACR password or service principal password
-- `AZURE_WEBAPP_NAME` — The Azure Web App name to deploy the image to
-
-Local verification steps:
-
-- Build image locally: `docker build -t knee_rehab_app:local .`
-- Run locally: `docker run -p 8000:8000 knee_rehab_app:local`
-- Or bring up the full development stack: `docker compose up --build`
+## Containerization & Local Dev
+- Build image: `docker build -t knee_rehab_app:local .`
+- Run container: `docker run --rm -p 8000:8000 knee_rehab_app:local`
+- Full stack: `docker compose up --build`
+- Monitoring: `docker-compose.monitoring.yml` (Prometheus + Grafana)
 - Smoke endpoints:
-  - `http://localhost:8000/health`
-  - `http://localhost:8000/metrics`
+	- [http://localhost:8000/health](http://localhost:8000/health)
+	- [http://localhost:8000/metrics](http://localhost:8000/metrics)
+
+---
+
+## Run, Test & Deploy (concise)
+
+Run (development)
+```bash
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+## File Structure
+```
+Run (docker)
+```bash
+docker build -t knee_rehab_app:local .
+docker run --rm -p 8000:8000 knee_rehab_app:local
+```
+
+Tests
+```bash
+# Activate virtualenv if used
+source .venv/bin/activate
+pip install -r requirements.txt
+PYTHONPATH=. pytest --cov=app --cov-report=term-missing tests/
+```
+
+```bash
+# on your workstation (after SSH public key installed on VM)
+ssh -i ~/.ssh/cd-exercise-vm-key azureuser@<VM_IP> \
+	"echo \"$GHCR_PAT\" | docker login ghcr.io -u <GH_USER> --password-stdin && \
+	 docker pull ghcr.io/<OWNER>/<REPO>:latest && \
+	 docker stop kneerehab_app || true && docker rm kneerehab_app || true && \
+	 docker run -d --name kneerehab_app --restart unless-stopped -p 8000:8000 ghcr.io/<OWNER>/<REPO>:latest"
+```
+
+## Deployment (GHCR + VM via SSH)
+- Prerequisites: VM with Docker, SSH key for `azureuser`
+- Add private key to repo secrets as `VM_SSH_PRIVATE_KEY`, set `VM_HOST` and `VM_USERNAME` variables
+- Manual deploy:
+```bash
+ssh -i ~/.ssh/cd-exercise-vm-key azureuser@<VM_IP> \
+	"echo \"$GHCR_PAT\" | docker login ghcr.io -u <GH_USER> --password-stdin && \
+	 docker pull ghcr.io/<OWNER>/<REPO>:latest && \
+	 docker stop kneerehab_app || true && docker rm kneerehab_app || true && \
+	 docker run -d --name kneerehab_app --restart unless-stopped -p 8000:8000 ghcr.io/<OWNER>/<REPO>:latest"
+```
+ - Use GitHub Actions workflow (`.github/workflows/cd.yml`) for automated build/push/deploy
+
+Image: ghcr.io/Sambitz234/knee_rehab_app:latest
+
+Application URL: http://108.143.92.226:8000
+
+Endpoints
+
+Health: http://108.143.92.226:8000/health
+Metrics: http://108.143.92.226:8000/metrics
+
+```
 
 ---
 
@@ -80,51 +99,54 @@ Local verification steps:
 
 ```
 knee_rehab_app/
-│ 
+├── .github/
+│   └── workflows/
+│       └── cd.yml
+│		└── ci.yml
 ├── app/
 │   ├── __init__.py
-│   ├── main.py           # FastAPI entry point, HTML rendering
-│   ├── models.py         # SQLAlchemy ORM models
-│   ├── schemas.py        # Pydantic schemas
-│   ├── database.py       # DB connection
-│   │ 
+│   ├── main.py
+│   ├── models.py
+│   ├── schemas.py
+│   ├── database.py
 │   ├── routers/
-│   │   ├── exercises.py  # Exercise CRUD endpoints
-│   │   ├── sessions.py   # Session CRUD endpoints
-│   │ 
+│   │   ├── exercises.py
+│   │   ├── sessions.py
+│   │   └── health.py
+│   ├── services/
+│   │   ├── exercises.py
+│   │   └──  sessions.py
 │   └── static/
-│   │   ├── styles.css    # App styles
-│   │   └── ui.js         # Frontend JS
-│   │ 
+│       ├── styles.css
+│       ├── ui.html
+│       └── ui.js
+├── monitoring/
+│   ├── grafana_dashboard.json
+│   ├── prometheus.yml
+│   └── README.md 			# to see monitoring configuration 
+├── tests/
+│   └── conftest.py
+│   └── test_day3_edgecases.py
+│   └── test_exercises_api.py
+│   └── test_exercises.py
+│   └── test_main.py
+│   └── test_models.py
+│   └── test_schemas.py
+│   └── test_services_exercises.py
+│   └── test_services_sessions.py
+│   └── test_sessions_api.py
+│   └── test_sessions.py
+├── Dockerfile
+├── docker-compose.yml
+├──docker-compose.monitoring.yml
 ├── requirements.txt
-├── rehab.db              # SQLite DB 
-└── README.md
+├── rehab.db
+├── README.md
+└── LICENSE
 ```
 
 ---
 
-## Running Tests & Checking Coverage
-
-To run all backend unit tests and check code coverage:
-
-1. **Activate your virtual environment:**
-	```bash
-	source .venv/bin/activate
-	```
-
-2. **Install dependencies (if not already done):**
-	```bash
-	pip install -r requirements.txt
-	```
-
-3. **Run all tests and show coverage report:**
-	```bash
-	PYTHONPATH=. pytest --cov=app --cov-report=term-missing tests/
-	```
-
-This will display a coverage summary in your terminal. For maximum grade, ensure coverage is above 90%.
-
----
 ## Troubleshooting
 - If you change models, delete `rehab.db` to reset the database.
 - For port conflicts, change the port in the `uvicorn` command (e.g., `--port 8080`).
