@@ -97,7 +97,6 @@ Metrics: http://108.143.92.226:8000/metrics
 
 ## File Structure
 
-```
 knee_rehab_app/
 ├── .github/
 │   └── workflows/
@@ -143,7 +142,6 @@ knee_rehab_app/
 ├── rehab.db
 ├── README.md
 └── LICENSE
-```
 
 ---
 
