@@ -113,7 +113,7 @@ jobs:
 
             # Ensure docker available; if docker needs sudo, uncomment next line:
             # SUDO="sudo"
-            SUDO=""
+            SUDO="sudo"
 
             # ensure image name is lowercase on the remote side (GHCR requires lowercase)
             IMAGE_NAME_LC=$(echo "${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')
