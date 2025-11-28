@@ -141,6 +141,20 @@ jobs:
             echo "Cleaning up dangling images"
             ${SUDO} docker image prune -f
 
+            for i in $(seq 1 60); do
+             if curl -sfS "http://${{ vars.VM_HOST }}:8000/health" >/dev/null 2>&1; then
+               echo "App healthy after $i seconds"
+               break
+             fi
+             sleep 1
+            done
+
+            if ! curl -sfS "http://${{ vars.VM_HOST }}:8000/health" >/dev/null 2>&1; then
+             echo "Final health check failed"
+             ${SUDO} docker logs kneerehab_app || true
+             exit 1
+            fi
+
             echo "Deployment Finished"
 
       - name: Deployment summary
