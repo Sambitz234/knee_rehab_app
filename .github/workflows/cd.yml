@@ -101,7 +101,7 @@ jobs:
           host: ${{ vars.VM_HOST }}
           username: ${{ vars.VM_USERNAME }}
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
-          envs: GITHUB_TOKEN
+          envs: REGISTRY,IMAGE_NAME,GITHUB_TOKEN
           script: |
             set -euo pipefail
 
