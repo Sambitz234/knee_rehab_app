@@ -2,7 +2,7 @@ name: CD Pipeline
 
 on:
   push:
-    branches: [ main, "07-azure-deploy" ]
+    branches: [ main, "fixing-cd" ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -87,7 +87,7 @@ jobs:
     name: Deploy to VM via SSH
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/07-azure-deploy'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/fixing-cd'
     environment: production
 
     steps:
